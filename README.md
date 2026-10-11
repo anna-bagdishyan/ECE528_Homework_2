@@ -37,4 +37,77 @@
 10. **How many Timer_A modules are available and how many PWM outputs can each module provide?**  
     There are 4 Timer A modules, and each module provides 5 PWM outputs.
 
-11. 
+11. **Describe the steps needed to initialize P2.4 as a PWM output driven by Timer_A0 CCR1 (TA0.1).**
+    ```c
+      void Timer_A0_PWM_Init(uint16_t period_constant, uint16_t duty_cycle_1, uint16_t duty_cycle_2)
+      {
+          // Return immediately if either duty cycle values are greater than
+          // or equal to the given period_constant
+          if (duty_cycle_1 >= period_constant) return;
+          
+          // Configure pin P2.4 (PM_TA0.1) to use peripheral function mode
+          // by setting Bit 4 of the SEL0 register for P2
+          // and clearing Bit 4 of the SEL1 register for P2
+          P2->SEL0 |= 0x10;
+          P2->SEL1 &= ~0x10;
+      
+          // Configure pin P2.4 as an output GPIO pin to drive the PWM signals
+          // Set Bit 4 of the DIR register for P2
+          P2->DIR |= 0x10;
+      
+          // Set the Timer A0 Capture/Compare register to the specified period_constant
+          // Assign the value of period_constant to the CCR[0] register
+          TIMER_A0->CCR[0] = period_constant;
+      
+          // Configure the Timer A0 expansion register to divide the clock frequency by 1
+          // Clear all bits of the EX0 register
+          TIMER_A0->EX0 = 0x0000;
+      
+          // Configure the output mode as Toggle / Reset for CCR[1]
+          // Set the bits of the OUTMOD field of the CCTL[1] register to 010b
+          TIMER_A0->CCTL[1] |= 0x0040;
+      
+          // Assign the value of duty_cycle_1 to the CCR[1] register
+          // Duty Cycle %: duty_cycle_1 / period_constant
+          TIMER_A0->CCR[1] = duty_cycle_1;
+      
+          // Modify the following bits in the CTL register
+          // Select SMCLK = 12 MHz as timer clock source
+          // Set ID = 1 (Divide timer clock by 2)
+          // Set MC = 3 (Up/Down Mode)
+          TIMER_A0->CTL = 0x0270;
+      }
+    ```
+12. ** **
+    ```c
+       void Timer_A0_Interrupt_Init(void(*task)(void), uint16_t period)
+       {
+          // Store the user-defined task function for use during interrupt handling
+          Timer_A0_Task = task;
+      
+          // Halt Timer A0 by clearing the MC bits in the CTL register
+          TIMER_A0->CTL &= ~0x0030;
+      
+          // In the CTL register, set the TASSEL and ID bits
+          TIMER_A0->CTL |= 0x0200;
+      
+          // Enable interrupt request of the
+          // corresponding Capture/Compare interrupt flag
+          TIMER_A0->CCTL[0] |= 0x0010;
+      
+          // Store the period in the CCR0 register
+          TIMER_A0->CCR[0] = (period - 1);
+      
+          // Divide the SMCLK frequency by 1
+          TIMER_A0->EX0 = 0x0000;
+      
+          // Interrupt priority level = 2
+          // Timer A0 has an IRQ number of 8
+          NVIC->IP[2] = (NVIC->IP[2] & 0xFFFFF00F) | 0x00000060;
+      
+          // Enable Interrupt 8 in NVIC
+          NVIC->ISER[0] |= 0x00000100;
+      
+          TIMER_A0->CTL |= 0x0014;
+      }
+```
