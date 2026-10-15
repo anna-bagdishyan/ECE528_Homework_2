@@ -8,7 +8,7 @@
    A clock signal is used to synchronize operations within a system. For the MSP432P401R microcontroller, there is the auxiliary clock, master clock, subsystem master clock, low-speed subsytem master clock, and low-speed backup domain clock.
    
 3. **Consider a 16-bit timer (e.g. Timer_A configured in up mode). If it counts upward, what is the maximum count value before it rolls over? Show your work.**
-   The maximum count value before rollver is 0xFFFF.  
+   The maximum count value before rollover is 0xFFFF.  
    2^16 - 1 = 65,536 -> 0xFFFF  
 4. **If a 24-bit timer counts upward from zero at 10 MHz, what is its overflow period? Show your work.**  
    The overflow period is 1.68 s.  
