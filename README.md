@@ -29,7 +29,7 @@
 - TAxCCRn
 - TaxIV
 - TAxEX0  
-   The TAxCTL register configures the oepration of Timer_A, TAxCCTLn controls the Timer_A output behavior, and TAxR contains the Timer_A count. TAxCCRn has two modes: compare mode and capture mode. In compare mode, it contains the value compared against a register. In capture mode, TAxR is copied into TAxCCRn when a capture occurs. The register TaxIV is used for interrupts, and TAxEX0 provides additional clock division.
+   The TAxCTL register configures the operation of Timer_A, TAxCCTLn controls the Timer_A output behavior, and TAxR contains the Timer_A count. TAxCCRn has two modes: compare mode and capture mode. In compare mode, it contains the value compared against a register. In capture mode, TAxR is copied into TAxCCRn when a capture occurs. The register TaxIV is used for interrupts, and TAxEX0 provides additional clock division.
   
 9. **What is PWM? Provide at least three example applications that use PWM in embedded systems.**  
   PWM is a technique used to vary the amount of power delivered to a device. In embedded systems, PWM can be used to adjust an LED's brightness, control the speed of motors, and for audio generation.
